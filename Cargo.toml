@@ -1,6 +1,6 @@
 [package]
 name = "peepable"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Brendan Ashworth <brendan.ashworth@me.com>"]
 license = "MIT"
 
