@@ -1,0 +1,12 @@
+[package]
+name = "peepable"
+version = "0.1.0"
+authors = ["Brendan Ashworth <brendan.ashworth@me.com>"]
+license = "MIT"
+
+readme = "README.md"
+description = "Peepable is a Peekable that allows peeping into immutable references"
+documentation = "https://docs.rs/peepable"
+repository = "https://github.com/brendanashworth/peepable"
+
+[dependencies]
