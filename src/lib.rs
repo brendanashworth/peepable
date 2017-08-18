@@ -1,6 +1,7 @@
 //! A Rust look-alike for Peekable that allows peeping into immutable references.
 
 use std::iter::Iterator;
+use std::mem;
 
 /// peepable is a Rust look-alike for
 /// [`Peekable`](https://doc.rust-lang.org/std/iter/struct.Peekable.html).
@@ -45,19 +46,20 @@ where
     /// The next item in the iterator. Because we're eager, this will
     /// always have a value. Peeking returns a reference to this value,
     /// and next shifts this off and replaces it with a new value.
-    next: Option<Option<I::Item>>,
+    next: Option<I::Item>,
 }
 
 impl<I: Iterator> Iterator for Peepable<I> {
     type Item = I::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let peeked = self.next.take();
-        let next = self.iter.next();
+        // Load the iterator's next value, swap it with the peeked one,
+        // and return the peeked value.
+        let mut next = self.iter.next();
 
-        self.next = Some(next);
+        mem::swap(&mut next, &mut self.next);
 
-        peeked.unwrap()
+        next
     }
 }
 
@@ -78,7 +80,7 @@ impl<I: Iterator> Peepable<I> {
 
         Peepable {
             iter: iter,
-            next: Some(next),
+            next: next,
         }
     }
 
@@ -96,9 +98,8 @@ impl<I: Iterator> Peepable<I> {
     /// ```
     pub fn peep(&self) -> Option<&I::Item> {
         match self.next {
-            Some(Some(ref next)) => Some(next),
-            Some(None) => None,
-            _ => unreachable!(),
+            Some(ref next) => Some(next),
+            None => None,
         }
     }
 }
